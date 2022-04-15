@@ -1,0 +1,12 @@
+.login_register, .booking{
+    width: 500px;
+    margin: 0 auto;
+}
+
+.status{
+    margin-left: 5rem;
+}
+
+.book{
+    margin-left: 7rem;
+}

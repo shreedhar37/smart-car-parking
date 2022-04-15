@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block title %}Index{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="container">
+    <div class="container" style="width: fit-content;">
+        <br><br><br><br><br>
+        {% if msg %}
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <strong>{{msg}}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <br><br>
+        {% endif %}
+        <canvas id="DemoCanvas"></canvas>
+        <p class="status">Status : Available</p>
+        <a class="book btn btn-success rounded-pill" href="{{ url_for('book_slot') }}">Book</a>
+        <script>
+            var canvas = document.getElementById("DemoCanvas");
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'green'; // color of fill
+                ctx.fillRect(10, 10, 5000, 5000); // create rectangle  
+            }
+        </script>
+    </div>
+
+</div>
+
+{% endblock %}

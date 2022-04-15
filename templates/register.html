@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register{% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="container">
+  <div class='mt-3 mb-3'>
+    <form class="login_register" action="{{ url_for('register') }}" method="post">
+      <div class="mb-3">
+        {% if msg %}
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+          <strong>{{msg}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <br><br>
+        {% endif %}
+        <label for="email" class="mt-3 form-label">Email address</label>
+        <input type="email" class="form-control rounded-pill" id="email" name="email" placeholder="stevejobs@gmail.com"
+          required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="********"
+          required>
+      </div>
+      <div class="mb-3">
+        <label for="cpassword" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control rounded-pill" id="cpassword" name='cpassword' placeholder="********"
+          required>
+      </div>
+
+
+      <button type="submit" class="mt-3 mb-3 btn btn-primary rounded-pill">Register</button>
+      <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}
