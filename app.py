@@ -13,13 +13,17 @@ try:
     app.secret_key = "your secret key"
 
     firebaseConfig = {
-   
+  
   }
 
 
     firebase = pyrebase.initialize_app(firebaseConfig)
     auth = firebase.auth()
-    db = firebase.database()    
+    db = firebase.database()
+    
+    
+    
+    
     status = ""
     @app.route("/")
 
@@ -122,8 +126,8 @@ try:
         session.pop('uid', None)
         return render_template('login.html', msg = 'Logged out successfully!!')
 
-    @app.route('/booking', methods = ["GET", "POST"])
-    def booking():
+    @app.route('/bookings', methods = ["GET", "POST"])
+    def bookings():
         try:
             if session['uid'] and request.method == "POST" and 'vno' in request.form and 'time' in request.form: 
                 dt = str(datetime.datetime.now())[:11]
@@ -137,9 +141,7 @@ try:
                 bookings = db.child("bookings").child(session['uid']).get()    
                 global status
                 status = "red"
-                return render_template("my_bookings.html", 
-                                        msg = "Booked a slot!!",
-                                        )
+                return redirect(url_for('my_bookings'))
             
            
         except Exception as e:
@@ -152,15 +154,18 @@ try:
         try:
             if session['uid']:
 
-                bookings = db.child("bookings").child(session['uid']).get()    
-                
-                my_bookings = dict()
-                for booking in bookings.each():
-                    my_bookings[booking.key()] = {'vehicle_no': booking.val()['vehicle_no'], 
+                bookings = db.child("bookings").child(session['uid']).get()
+                if bookings.val():
+                    my_bookings = dict()
+                    for booking in bookings.each():
+                        my_bookings[booking.key()] = {'vehicle_no': booking.val()['vehicle_no'], 
                                                 'duration': booking.val()['duration'], 
                                                 'date': booking.val()['date']
                                                 }
-                return render_template("my_bookings.html", my_bookings = my_bookings)
+                    
+                    return render_template("my_bookings.html", my_bookings = my_bookings)
+                else:
+                    return render_template("my_bookings.html", msg = "You haven't made any booking !! ")
 
             else:
                 return render_template("login.html", msg = "Please login first!!!")

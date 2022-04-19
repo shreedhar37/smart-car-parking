@@ -16,6 +16,7 @@
     </div>
     <br><br>
     {% endif %}
+    {% if my_bookings %}
         <table class="table table-striped">
           <thead>
             <tr>
@@ -36,7 +37,8 @@
             {% endfor %}
           </tbody>
         </table>
-        
+      {% endif%}
+      
   </div>
 
 
