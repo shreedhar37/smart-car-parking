@@ -17,14 +17,24 @@
         </div>
         <br><br>
         {% endif %}
+        <input id="status" type="hidden" value="{{ status }}">
         <canvas id="DemoCanvas"></canvas>
+        <p style="margin-left:4rem;"><small>Venue: Panvel Railway Station</small></p>
+        {% if status == "green" %}
         <p class="status">Status : Available</p>
         <a class="book btn btn-success rounded-pill" href="{{ url_for('book_slot') }}">Book</a>
+        {% else %}
+        <p class="status">Status : Not Available</p>
+        {% endif %}
+
+        
         <script>
-            var canvas = document.getElementById("DemoCanvas");
+            let canvas = document.getElementById("DemoCanvas");
+            let status = document.getElementById("status").value ;
+            console.log(status)
             if (canvas.getContext) {
                 var ctx = canvas.getContext('2d');
-                ctx.fillStyle = 'green'; // color of fill
+                ctx.fillStyle = status ; // color of fill
                 ctx.fillRect(10, 10, 5000, 5000); // create rectangle  
             }
         </script>
