@@ -1,11 +1,11 @@
 import datetime
 from flask import Flask, render_template, redirect, request, request_tearing_down, session, url_for
 import re
-from idna import valid_label_length
 import pyrebase
 from requests import Session
 import re
 import time
+import threading 
 
 
 try:
@@ -13,26 +13,42 @@ try:
     app.secret_key = "your secret key"
 
     firebaseConfig = {
-  
+ 
   }
 
 
     firebase = pyrebase.initialize_app(firebaseConfig)
     auth = firebase.auth()
     db = firebase.database()
+
+    status= "green"
+    duration = 0
+    flag = 0
+
     
-    
-    
-    
-    status = ""
     @app.route("/")
 
     def index():
         global status   
-        status = db.child("sensor_value").get().val()
-        status = "green" if status == "0" else "red"
-        print(status)
+        # status = db.child("sensor_value").get().val()
+        # print(status)
+        # status = "green" if status == "0" else "red"
         
+        def slot_free():
+            # print("after 1 minute")
+            global status
+            status = "green"
+            global flag, duration
+            flag, duration = 0, 0
+                #    db.child("sensor_value").push("0")
+       
+        print(flag)
+
+        if flag == 1:
+            # print("inside slot free")
+            print(duration)
+            start_time = threading.Timer(float(int(duration) * 60), slot_free)
+            start_time.start()
         return render_template('index.html', status = status)
 
     @app.route("/register", methods = ["GET", "POST"])
@@ -94,7 +110,7 @@ try:
                     return render_template('login.html', msg = 'Invalid email or password')
             
             if  request.method == "GET" :
-                print("inside normal request")
+                # print("inside normal request")
                 
                 return render_template('login.html')
             
@@ -122,7 +138,7 @@ try:
 
     @app.route('/logout')
     def logout():
-        print("inside log out")
+        # print("inside log out")
         session.pop('uid', None)
         return render_template('login.html', msg = 'Logged out successfully!!')
 
@@ -132,15 +148,20 @@ try:
             if session['uid'] and request.method == "POST" and 'vno' in request.form and 'time' in request.form: 
                 dt = str(datetime.datetime.now())[:11]
                 vehicle_no  = request.form['vno']
+                global duration
                 duration = request.form['time']
-                
-                
+                global flag
+                flag = 1
                 bookings = db.child("bookings").child(session['uid']).get()    
                 data = { ("date") : dt, ("vehicle_no" ) : vehicle_no, ("duration") : duration}
                 db.child("bookings").child(session['uid']).push(data)
                 bookings = db.child("bookings").child(session['uid']).get()    
                 global status
                 status = "red"
+                
+                # db.child("sensor_value").update({"1"})
+                
+                    
                 return redirect(url_for('my_bookings'))
             
            
@@ -173,7 +194,11 @@ try:
         except Exception as e:
             print(e)
             return render_template("my_bookings.html", msg = e)
-
+    
+    
+    
+    
+    
 except Exception as e:
     print(e)
 
